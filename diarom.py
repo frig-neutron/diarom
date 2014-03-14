@@ -17,6 +17,8 @@ class ROMObject(object):
     self.text = text.strip()
 
   def __repr__(self): return self.text+' ['+str(self.oid)+']'
+  def __hash__(self): return self.oid
+  def __eq__(self, other): return self.oid == other.oid
 
 
 class ROMParseResult:

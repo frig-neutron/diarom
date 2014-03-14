@@ -19,6 +19,22 @@ class DiaRomTest(unittest.TestCase):
     repr=str(obj)
     self.assertEqual('voorwerp [42]', repr)
 
+  def test_romObjectHashBasedOnOid(self):
+    obj=diarom.ROMObject('voorwerp', 42)
+    hash=obj.__hash__()
+    self.assertEqual(42, hash)
+
+  def test_romObjectsShouldBeEqualIfOidsEqual(self):
+    obj1=diarom.ROMObject('voorwerp1', 42)
+    obj2=diarom.ROMObject('voorwerp2', 42)
+    self.assertEqual(obj1, obj2)
+    
+  def test_romObjectsShouldBeNotEqualIfOidsNotEqual(self):
+    obj1=diarom.ROMObject('voorwerp', 42)
+    obj2=diarom.ROMObject('voorwerp', 43)
+    self.assertNotEqual(obj1, obj2)
+    
+
 if __name__ == '__main__':
   unittest.main()
 
