@@ -89,6 +89,60 @@ def import_romtext(inFile, diagramData):
   dia.active_display().add_update_all()
   dia.active_display().flush()
 
+REL_CONSTRAINT=1
+REL_SUB2VERB=2
+REL_VERB2OBJ=3
+REL_OTHER=4
+
+class ROMRenderer: 
+
+  def rel_type(self, diaRel):
+    """Identify what type of ROM relation the dia line represents."""
+    return REL_CONSTRAINT   #TODO: examine the arrow
+
+  # TODO: look into enum type capabililty. If enum supports methods, replace rel types 
+  #       with enums and make this enum instance method
+  def is_symmetric_rel(self, rel):
+    """Identify whether the relation is symmetric or not.
+      Only verb relations are symmetric.  """
+    return False #TODO: if rel is Line type, find rel_type, if not return true if 2 or 3 else false
+
+  def connected_obj(self, rel, hIdx): 
+    return ROMObject(
+      rel.handles[hIdx].connected_to.object.properties['name'].value)
+
+  def pointer_obj(self, rel): return self.connected_obj(rel, 0)
+
+  def pointee_obj(self, rel): return self.connected_obj(rel, 1)
+
+  def begin_render (self, data, filename):
+    """DiaRenderer interface method"""
+    lines = filter(
+      lambda o: o.type.name == 'Standard - Line', 
+      data.active_layer.objects)
+
+    incidenceHash={} # hash-o-hashes: pointer obj -> { pointee obj -> reltype }
+    def relation(rel_from, rel_to, rel_type):
+      if rel_from not in incidenceHash: 
+        incidenceHash[rel_from] = {}
+
+      pointees=incidenceHash[rel_from]
+      pointees[rel_to]=rel_type
+
+    for rel in lines: 
+      rel_type = self.rel_type(rel)
+      sym = self.is_symmetric_rel(rel)
+      relation( self.pointer_obj(rel), self.pointee_obj(rel), rel_type)
+      if sym: # reverse relationship
+        relation ( pointee_obj(rel), pointer_obj(rel), rel_type)
+      
+    f=open(filename, 'w')
+    f.write(str(incidenceHash))
+    f.close
+
+  def end_render(self):
+    """DiaRender interface method"""
+    pass
 
 if __name__ == '__main__':
   import sys
@@ -100,5 +154,10 @@ if __name__ == '__main__':
     words=fact.parse_words(line)
     print words.words
 else:
-  import dia
-  dia.register_import ("ROM Text2Obj", "txt", import_romtext)
+  try:
+    import dia
+    dia.register_import ("ROM Text2Obj", "txt", import_romtext)
+    dia.register_export ("ROM Incidence Matrix", "csv", ROMRenderer())
+  except ImportError, e: 
+    pass
+
