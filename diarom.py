@@ -78,6 +78,27 @@ class ROMObjectFactory(object):
       box.properties['text'] = word
       layer.add_object(box)
 
+# TODO: make this function a method of some ROMObjects collection class.
+#       Then nElements will not be required since the collection can count
+#       the number of distinct OIDs it has.
+def dictMatrixToListMatrix(dictMatrix, nElements):
+  """Convert dict-based matrix representation to list-based square matrix.
+
+    Dict-based matrix is a hash-o-hashes. Logically it's From -> To -> RelType.
+    Dict keys may be interchangeably numericals or ROMObject instances.
+    nElements is required because the hash may be sparse, resulting in fewer 
+    rows than objects in diagram. Thus, must count externally.
+    """
+  listMat=[[0]*nElements]*nElements
+  for obj_from in dictMatrix.keys():
+    idx_from=int(obj_from)-1
+    listMat[idx_from]=[0]*nElements
+    for obj_to in dictMatrix[obj_from].keys():
+      idx_to=int(obj_to)-1
+      listMat[idx_from][idx_to]=dictMatrix[obj_from][obj_to]
+
+  return listMat
+
 def import_romtext(inFile, diagramData):
   import dia
   fact=ROMObjectFactory()
