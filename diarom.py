@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+REL_CONSTRAINT=1
+REL_SUB2VERB=2
+REL_VERB2OBJ=3
+REL_OTHER=4
+
 class ROMObject(object): 
   def __init__(self, text, oid=None):
 
@@ -21,6 +26,64 @@ class ROMObject(object):
   def __int__(self): return self.oid
   def __eq__(self, other): return self.oid == other.oid
 
+def name_of(obj):
+  """Find the text from the label of boxy shape thing."""
+  obj_type=obj.type.name
+  if obj_type == 'ER - Entity':
+    return obj.properties['name'].value
+  if obj_type == 'Flowchart - Box':
+    return obj.properties['text'].value.text
+
+def mkRomRelation(diaLine):
+
+  ARROW_TYPE_NONE=0
+  ARROW_TYPE_PLAIN=1
+  ARROW_TYPE_BALL_FILLED_BLACK=8
+  ARROW_TYPE_BALL_FILLED_WHITE=9
+  ARROW_TYPE_STARFLEET_FILLED=22
+  ARROW_TYPE_STARFLEET_HOLLOW=23
+  ARROW_TYPE_TRIANGLE_FILLED_BLACK=3
+  ARROW_TYPE_TRIANGLE_FILLED_WHITE=2
+  ARROW_TYPE_TRIANGLE_HOLLOW=12
+  ARROW_TYPE_RECT_STRIKE_FILLED_BLACK=16
+  ARROW_TYPE_RECT_STRIKE_FILLED_WHITE=17
+
+  def arrowhead(which): return diaLine.properties[which+'_arrow'].value.type
+
+  arrow_start=arrowhead('start')
+  arrow_end=arrowhead('end')
+  line_style,_=diaLine.properties['line_style'].value
+
+  if line_style > 0:
+    rel_type = REL_OTHER
+  elif arrow_start == ARROW_TYPE_BALL_FILLED_BLACK:
+    rel_type = REL_CONSTRAINT
+  elif arrow_start == ARROW_TYPE_NONE:
+    rel_type = REL_VERB2OBJ
+  elif arrow_start == ARROW_TYPE_RECT_STRIKE_FILLED_BLACK:
+    rel_type = REL_SUB2VERB
+  else:
+    raise Exception(
+      "Don't know rel type. Line style="+str(
+        line_style)+" start_arrow="+str(
+        arrow_start)+" end_arrow="+str(arrow_end))
+
+  def connected_obj(hIdx): 
+    name = name_of( diaLine.handles[hIdx].connected_to.object )
+    return ROMObject( name )
+
+  pointer_obj = connected_obj(0)
+  pointee_obj = connected_obj(1)
+
+  return ROMRelation(pointer_obj, pointee_obj, rel_type) 
+
+class ROMRelation(object): 
+  
+  def __init__(self, pointer_obj, pointee_obj, rel_type): 
+    self.pointer_obj = pointer_obj
+    self.pointee_obj = pointee_obj
+    self.rel_type = rel_type
+    self.symmetric = rel_type == REL_SUB2VERB or rel_type == REL_VERB2OBJ
 
 class ROMParseResult:
   words=[]
@@ -111,48 +174,20 @@ def import_romtext(inFile, diagramData):
   dia.active_display().add_update_all()
   dia.active_display().flush()
 
-REL_CONSTRAINT=1
-REL_SUB2VERB=2
-REL_VERB2OBJ=3
-REL_OTHER=4
 
 class ROMRenderer: 
 
-  def rel_type(self, diaRel):
-    """Identify what type of ROM relation the dia line represents."""
-    return REL_CONSTRAINT   #TODO: examine the arrow
-
-  # TODO: look into enum type capabililty. If enum supports methods, replace rel types 
-  #       with enums and make this enum instance method
-  def is_symmetric_rel(self, rel):
-    """Identify whether the relation is symmetric or not.
-      Only verb relations are symmetric.  """
-    return False #TODO: if rel is Line type, find rel_type, if not return true if 2 or 3 else false
-
-  def name_of(self, obj):
-    """Find the text from the label of boxy shape thing."""
-    obj_type=obj.type.name
-    if obj_type == 'ER - Entity':
-      return obj.properties['name'].value
-    if obj_type == 'Flowchart - Box':
-      return obj.properties['text'].value.text
-
-  def connected_obj(self, rel, hIdx): 
-    name = self.name_of( rel.handles[hIdx].connected_to.object )
-    return ROMObject( name )
-
-  def pointer_obj(self, rel): return self.connected_obj(rel, 0)
-
-  def pointee_obj(self, rel): return self.connected_obj(rel, 1)
-
   def begin_render (self, data, filename):
     """DiaRenderer interface method"""
-    lines = filter(
-      lambda o: o.type.name == 'Standard - Line', 
-      data.active_layer.objects)
 
-    incidenceHash={} # hash-o-hashes: pointer obj -> { pointee obj -> reltype }
+    def is_line(o): return o.type.name == 'Standard - Line'
+
+    objects=data.active_layer.objects
+    relations = [mkRomRelation(obj) for obj in objects if is_line(obj)]
+
+    incidenceHash={} # hash-o-hashes: pointer obj -> { pointee obj -> rel type }
     uniqueObjects=set()
+
     def relation(rel_from, rel_to, rel_type):
       uniqueObjects.add(rel_from)
       uniqueObjects.add(rel_to)
@@ -163,12 +198,10 @@ class ROMRenderer:
       pointees=incidenceHash[rel_from]
       pointees[rel_to]=rel_type
 
-    for rel in lines: 
-      rel_type = self.rel_type(rel)
-      sym = self.is_symmetric_rel(rel)
-      relation( self.pointer_obj(rel), self.pointee_obj(rel), rel_type)
-      if sym: # reverse relationship
-        relation ( pointee_obj(rel), pointer_obj(rel), rel_type)
+    for rel in relations: 
+      relation( rel.pointer_obj, rel.pointee_obj, rel.rel_type)
+      if rel.symmetric: 
+        relation (rel.pointee_obj, rel.pointer_obj, rel.rel_type)
       
     f=open(filename, 'w')
     incidenceMatrix=dictMatrixToListMatrix(incidenceHash, len(uniqueObjects))
