@@ -18,6 +18,7 @@ class ROMObject(object):
 
   def __repr__(self): return self.text+' ['+str(self.oid)+']'
   def __hash__(self): return self.oid
+  def __int__(self): return self.oid
   def __eq__(self, other): return self.oid == other.oid
 
 
@@ -107,9 +108,17 @@ class ROMRenderer:
       Only verb relations are symmetric.  """
     return False #TODO: if rel is Line type, find rel_type, if not return true if 2 or 3 else false
 
+  def name_of(self, obj):
+    """Find the text from the label of boxy shape thing."""
+    obj_type=obj.type.name
+    if obj_type == 'ER - Entity':
+      return obj.properties['name'].value
+    if obj_type == 'Flowchart - Box':
+      return obj.properties['text'].value.text
+
   def connected_obj(self, rel, hIdx): 
-    return ROMObject(
-      rel.handles[hIdx].connected_to.object.properties['name'].value)
+    name = self.name_of( rel.handles[hIdx].connected_to.object )
+    return ROMObject( name )
 
   def pointer_obj(self, rel): return self.connected_obj(rel, 0)
 

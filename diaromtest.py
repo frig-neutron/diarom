@@ -19,6 +19,10 @@ class DiaRomTest(unittest.TestCase):
     repr=str(obj)
     self.assertEqual('voorwerp [42]', repr)
 
+  def test_romObjectIntConversionBasedOnOid(self):
+    obj=diarom.ROMObject('voorwerp', 42)
+    self.assertEqual(42, int(obj))
+
   def test_romObjectHashBasedOnOid(self):
     obj=diarom.ROMObject('voorwerp', 42)
     hash=obj.__hash__()
