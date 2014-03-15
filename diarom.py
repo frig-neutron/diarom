@@ -90,10 +90,10 @@ def dictMatrixToListMatrix(dictMatrix, nElements):
     rows than objects in diagram. Thus, must count externally.
     """
   listMat=[[0]*nElements]*nElements
-  for obj_from in dictMatrix.keys():
+  for obj_from in dictMatrix:
     idx_from=int(obj_from)-1
     listMat[idx_from]=[0]*nElements
-    for obj_to in dictMatrix[obj_from].keys():
+    for obj_to in dictMatrix[obj_from]:
       idx_to=int(obj_to)-1
       listMat[idx_from][idx_to]=dictMatrix[obj_from][obj_to]
 
