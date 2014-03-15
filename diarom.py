@@ -152,7 +152,11 @@ class ROMRenderer:
       data.active_layer.objects)
 
     incidenceHash={} # hash-o-hashes: pointer obj -> { pointee obj -> reltype }
+    uniqueObjects=set()
     def relation(rel_from, rel_to, rel_type):
+      uniqueObjects.add(rel_from)
+      uniqueObjects.add(rel_to)
+
       if rel_from not in incidenceHash: 
         incidenceHash[rel_from] = {}
 
@@ -167,7 +171,11 @@ class ROMRenderer:
         relation ( pointee_obj(rel), pointer_obj(rel), rel_type)
       
     f=open(filename, 'w')
-    f.write(str(incidenceHash))
+    incidenceMatrix=dictMatrixToListMatrix(incidenceHash, len(uniqueObjects))
+    for row in incidenceMatrix:
+      rowstr=','.join(str(x) for x in row)
+      f.write(rowstr)
+      f.write('\n')
     f.close
 
   def end_render(self):
