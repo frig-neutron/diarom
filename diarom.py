@@ -148,7 +148,7 @@ def dictMatrixToListMatrix(dictMatrix, nElements):
   """Convert dict-based matrix representation to list-based square matrix.
 
     Dict-based matrix is a hash-o-hashes. Logically it's From -> To -> RelType.
-    Dict keys may be interchangeably numericals or ROMObject instances.
+    Dict keys may be numerical oids or ROMObject instances.
     nElements is required because the hash may be sparse, resulting in fewer 
     rows than objects in diagram. Thus, must count externally.
     """
