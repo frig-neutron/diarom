@@ -174,6 +174,13 @@ def import_romtext(inFile, diagramData):
   dia.active_display().add_update_all()
   dia.active_display().flush()
 
+class MaxRegister:
+  def __init__(self):
+    self.max=0
+
+  def set(self, x):
+    if self.max < x: 
+      self.max=x
 
 class ROMRenderer: 
 
@@ -186,11 +193,11 @@ class ROMRenderer:
     relations = [mkRomRelation(obj) for obj in objects if is_line(obj)]
 
     incidenceHash={} # hash-o-hashes: pointer obj -> { pointee obj -> rel type }
-    uniqueObjects=set()
+    maxOid=MaxRegister()
 
     def relation(rel_from, rel_to, rel_type):
-      uniqueObjects.add(rel_from)
-      uniqueObjects.add(rel_to)
+      maxOid.set(rel_from.oid)
+      maxOid.set(rel_to.oid)
 
       if rel_from not in incidenceHash: 
         incidenceHash[rel_from] = {}
@@ -204,7 +211,7 @@ class ROMRenderer:
         relation (rel.pointee_obj, rel.pointer_obj, rel.rel_type)
       
     f=open(filename, 'w')
-    incidenceMatrix=dictMatrixToListMatrix(incidenceHash, len(uniqueObjects))
+    incidenceMatrix=dictMatrixToListMatrix(incidenceHash, maxOid.max)
     for row in incidenceMatrix:
       rowstr=','.join(str(x) for x in row)
       f.write(rowstr)
