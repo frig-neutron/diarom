@@ -187,7 +187,8 @@ class ROMRenderer:
   def begin_render (self, data, filename):
     """DiaRenderer interface method"""
 
-    def is_line(o): return o.type.name == 'Standard - Line'
+    def is_line(o): 
+      return o.type.name == 'Standard - Line' or o.type.name == 'Standard - PolyLine'
 
     objects=data.active_layer.objects
     relations = [mkRomRelation(obj) for obj in objects if is_line(obj)]
