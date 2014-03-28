@@ -69,11 +69,18 @@ def mkRomRelation(diaLine):
         arrow_start)+" end_arrow="+str(arrow_end))
 
   def connected_obj(hIdx): 
-    name = name_of( diaLine.handles[hIdx].connected_to.object )
-    return ROMObject( name )
+    """Return ROMObject instance representing connection endpoint"""
+    connected_to=diaLine.handles[hIdx].connected_to
+    if connected_to is None:
+      dia.active_display().diagram.select(diaLine)
+      dia.active_display().flush()
+      print(diaLine)
+    else:
+      name = name_of( connected_to.object )
+      return ROMObject( name )
 
   pointer_obj = connected_obj(0)
-  pointee_obj = connected_obj(1)
+  pointee_obj = connected_obj(1)  # PolyLines + others use different indexing
 
   return ROMRelation(pointer_obj, pointee_obj, rel_type) 
 
