@@ -91,7 +91,13 @@ def dictMatrixToListMatrix(dictMatrix, nElements):
     listMat[idx_from]=[0]*nElements
     for obj_to in dictMatrix[obj_from]:
       idx_to=int(obj_to)-1
-      listMat[idx_from][idx_to]=dictMatrix[obj_from][obj_to]
+      el=dictMatrix[obj_from][obj_to]
+      try:
+        listMat[idx_from][idx_to]=el
+      except IndexError, e:
+        errorMessage="""Error writing to list matrix at outer_index=%d, inner_index=%d, nElements=%d""" % (idx_from, idx_to, nElements)
+        print errorMessage
+        raise e
 
   return listMat
 
@@ -151,8 +157,8 @@ class ROMRenderer:
       if rel.symmetric: 
         relation (rel.pointee_obj, rel.pointer_obj, rel.rel_type)
       
-    f=open(filename, 'w')
     incidenceMatrix=dictMatrixToListMatrix(incidenceHash, maxOid.max)
+    f=open(filename, 'w')
     for row in incidenceMatrix:
       rowstr=','.join(str(x) for x in row)
       f.write(rowstr)
