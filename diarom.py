@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import rommodel
+import rominput
 
 REL_CONSTRAINT=1
 REL_SUB2VERB=2
@@ -73,24 +74,6 @@ class ROMRelation(object):
     self.rel_type = rel_type
     self.symmetric = rel_type == REL_SUB2VERB or rel_type == REL_VERB2OBJ
 
-class ROMObjectFactory(object): 
-  def __init__(self):
-    import rominput
-    self.parser = rominput.ROMInputParser()
-
-  def parse_words(self, words): return self.parser.parse_words(words)
-
-  def rom_object_gen(self, data, string):
-    import dia
-    boxType=dia.get_object_type("Flowchart - Box")
-    layer=data.active_layer
-
-    parsed=self.parse_words(string)
-    for word in reversed(parsed):
-      box, h1, h2=boxType.create(0,0)
-      box.properties['text'] = str(word)
-      layer.add_object(box)
-
 # TODO: make this function a method of some ROMObjects collection class.
 #       Then nElements will not be required since the collection can count
 #       the number of distinct OIDs it has.
@@ -112,14 +95,24 @@ def dictMatrixToListMatrix(dictMatrix, nElements):
 
   return listMat
 
+def rom_object_draw(data, words):
+  import dia
+  boxType=dia.get_object_type("Flowchart - Box")
+  layer=data.active_layer
+
+  for word in reversed(words):
+    box, h1, h2=boxType.create(0,0)
+    box.properties['text'] = str(word)
+    layer.add_object(box)
+
 def import_romtext(inFile, diagramData):
   import dia
-  fact=ROMObjectFactory()
+  parser = rominput.ROMInputParser()
+
   f = open(inFile)
-  text=''
   for line in f:
-    text+=line
-  fact.rom_object_gen(diagramData, text)
+    words = parser.parse_words(line)
+    rom_object_draw(diagramData, words)
 
   dia.active_display().add_update_all()
   dia.active_display().flush()
@@ -175,13 +168,13 @@ class ROMRenderer:
 
 if __name__ == '__main__':
   import sys
-  fact=ROMObjectFactory()
 
   inFile=sys.argv[1]
+  parser = rominput.ROMInputParser()
   f=open(inFile)
   for line in f:
-    words=fact.parse_words(line)
-    print words.words
+    words=parser.parse_words(line)
+    print words
 else:
   try:
     import dia
