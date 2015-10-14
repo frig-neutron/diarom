@@ -3,7 +3,6 @@
 
 import rommodel
 
-
 class ROMParseResult:
   indexedInput=''
 
@@ -41,3 +40,8 @@ class ROMInputParser:
 
     return ctx.words
 
+def read_file(path):
+  f = open(path)
+  parser = ROMInputParser()
+  wordlists = [parser.parse_words(line) for line in f]
+  return reduce(list.__add__, wordlists)

@@ -107,12 +107,9 @@ def rom_object_draw(data, words):
 
 def import_romtext(inFile, diagramData):
   import dia
-  parser = rominput.ROMInputParser()
 
-  f = open(inFile)
-  for line in f:
-    words = parser.parse_words(line)
-    rom_object_draw(diagramData, words)
+  words = rominput.read_file(inFile)
+  rom_object_draw(diagramData, words)
 
   dia.active_display().add_update_all()
   dia.active_display().flush()
@@ -170,11 +167,8 @@ if __name__ == '__main__':
   import sys
 
   inFile=sys.argv[1]
-  parser = rominput.ROMInputParser()
-  f=open(inFile)
-  for line in f:
-    words=parser.parse_words(line)
-    print words
+  words=rominput.read_file(inFile)
+  print words
 else:
   try:
     import dia
