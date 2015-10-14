@@ -92,50 +92,12 @@ class ROMRelation(object):
     self.rel_type = rel_type
     self.symmetric = rel_type == REL_SUB2VERB or rel_type == REL_VERB2OBJ
 
-class ROMParseResult:
-  words=[]
-  indexedInput=''
-
 class ROMObjectFactory(object): 
   def __init__(self):
-    self.wordCount=0
+    import rominput
+    self.parser = rominput.ROMInputParser()
 
-  def parse_words(self, words):
-    class ParseContext:
-      def __init__(dasInnerIch):
-        dasInnerIch.words=[]
-        dasInnerIch.wordsIndexed=''
-        dasInnerIch.inWord=False
-        dasInnerIch.word=''
-
-    ctx=ParseContext()
-
-    def next_word():
-      self.wordCount+=1
-      sufx='['+str(self.wordCount)+']'
-      ctx.word+=sufx
-      ctx.wordsIndexed+=sufx
-      ctx.words+=[ctx.word]
-
-    for c in words:
-      if c.isalnum():
-        ctx.word+=c
-        ctx.wordsIndexed+=c
-        ctx.inWord=True       
-      else:
-        if ctx.inWord:
-          # end of word
-          next_word()
-        ctx.inWord=False
-        ctx.wordsIndexed+=c
-        ctx.word=''
-    if ctx.inWord:
-      next_word()
-
-    ret=ROMParseResult()
-    ret.words = ctx.words
-    ret.indexedInput = ctx.wordsIndexed
-    return ret
+  def parse_words(self, words): return self.parser.parse_words(words)
 
   def rom_object_gen(self, data, string):
     import dia
