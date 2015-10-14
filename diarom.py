@@ -1,30 +1,11 @@
 #!/usr/bin/env python
 
+import rommodel
+
 REL_CONSTRAINT=1
 REL_SUB2VERB=2
 REL_VERB2OBJ=3
 REL_OTHER=4
-
-class ROMObject(object): 
-  def __init__(self, text, oid=None):
-
-    openIndex=text.find('[')
-    closeIndex=text.find(']')
-
-    def parseOid(): return int(text[openIndex+1:closeIndex])
-    def stripOid(): return text[0:openIndex].strip()
-    
-    if not oid: 
-      oid = parseOid()
-      text = stripOid()
-
-    self.oid = oid
-    self.text = text.strip()
-
-  def __repr__(self): return self.text+' ['+str(self.oid)+']'
-  def __hash__(self): return self.oid
-  def __int__(self): return self.oid
-  def __eq__(self, other): return self.oid == other.oid
 
 def name_of(obj):
   """Find the text from the label of boxy shape thing."""
@@ -77,7 +58,7 @@ def mkRomRelation(diaLine):
       print(diaLine)
     else:
       name = name_of( connected_to.object )
-      return ROMObject( name )
+      return rommodel.ROMObject( name )
 
   pointer_obj = connected_obj(0)
   pointee_obj = connected_obj(1)  # PolyLines + others use different indexing
