@@ -1,8 +1,10 @@
 #!/usr/bin/env python
-"""Read and index words"""
+"""Read and index words from string"""
+
+import rommodel
+
 
 class ROMParseResult:
-  words=[]
   indexedInput=''
 
 class ROMInputParser: 
@@ -10,38 +12,32 @@ class ROMInputParser:
     self.wordCount=0
 
   def parse_words(self, words):
+    oldWordCount = self.wordCount
     class ParseContext:
-      def __init__(dasInnerIch):
-        dasInnerIch.words=[]
-        dasInnerIch.wordsIndexed=''
-        dasInnerIch.inWord=False
-        dasInnerIch.word=''
+      def __init__(ctx):
+        ctx.words=[]
+        ctx.inWord=False
+        ctx.word=''
 
     ctx=ParseContext()
 
     def next_word():
       self.wordCount+=1
-      sufx='['+str(self.wordCount)+']'
-      ctx.word+=sufx
-      ctx.wordsIndexed+=sufx
-      ctx.words+=[ctx.word]
+      romobject = rommodel.ROMObject(ctx.word, self.wordCount)
+      ctx.words+=[romobject]
 
     for c in words:
       if c.isalnum():
         ctx.word+=c
-        ctx.wordsIndexed+=c
         ctx.inWord=True       
       else:
         if ctx.inWord:
           # end of word
           next_word()
         ctx.inWord=False
-        ctx.wordsIndexed+=c
         ctx.word=''
     if ctx.inWord:
       next_word()
 
-    ret=ROMParseResult()
-    ret.words = ctx.words
-    ret.indexedInput = ctx.wordsIndexed
-    return ret
+    return ctx.words
+

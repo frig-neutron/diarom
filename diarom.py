@@ -86,9 +86,9 @@ class ROMObjectFactory(object):
     layer=data.active_layer
 
     parsed=self.parse_words(string)
-    for word in reversed(parsed.words):
+    for word in reversed(parsed):
       box, h1, h2=boxType.create(0,0)
-      box.properties['text'] = word
+      box.properties['text'] = str(word)
       layer.add_object(box)
 
 # TODO: make this function a method of some ROMObjects collection class.
