@@ -11,6 +11,10 @@ class ROMInputParser:
     self.wordCount=0
 
   def parse_words(self, words):
+    """ Convert word string to list of ROMObject. 
+
+    OID numbering spans invocations. The first OID returned will be one greater
+    than the last OID of the previous invocation.  """
     oldWordCount = self.wordCount
     class ParseContext:
       def __init__(ctx):
@@ -41,6 +45,7 @@ class ROMInputParser:
     return ctx.words
 
 def read_file(path):
+  """Convert all words in file to ROMObjects"""
   f = open(path)
   parser = ROMInputParser()
   wordlists = [parser.parse_words(line) for line in f]
