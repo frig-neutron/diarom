@@ -69,17 +69,22 @@ class RomGenSeqTest(unittest.TestCase):
 
     self.assertEqual(expectedTrav, actualTrav)
 
-
-  def test_labelTraversal(self):
+  def test_labelingOfOids(self):
     import rommodel
-    oids=[2,1]
-    words=[rommodel.ROMObject('a',1), rommodel.ROMObject('b',2)]
-    
+    oids=[2,3,1]
+    words=[
+        rommodel.ROMObject('a', 1),
+        rommodel.ROMObject('b', 2),
+        rommodel.ROMObject('c', 3)]
+
     wordsInOrder=romgenseq.orderRomObjectsByOid(words,oids)
 
-    expectedOrder=[words[1], words[0]]
-    self.assertEqual(expectedOrder, wordsInOrder)
+    expectedOrder=[
+        words[1], 
+        words[2], 
+        words[0]]
 
+    self.assertEqual(expectedOrder, wordsInOrder)
 
 
 if __name__ == '__main__':

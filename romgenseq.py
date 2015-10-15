@@ -111,7 +111,7 @@ def orderRomObjectsByOid(romObjects,oidOrder):
     words from romobjects list, in the order they appear in oidOrder
   """
   romoids=map(int, romObjects)
-  indexes=map(oidOrder.index, romoids)
+  indexes=map(romoids.index, oidOrder)
   ordered=map(romObjects.__getitem__, indexes)
   return ordered
 
