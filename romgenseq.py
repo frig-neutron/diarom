@@ -114,6 +114,16 @@ def orderRomObjectsByOid(romObjects,oidOrder):
   indexes=map(oidOrder.index, romoids)
   ordered=map(romObjects.__getitem__, indexes)
   return ordered
+
+def printOids(oids): 
+  print ",".join(map(str, oids))
+
+def printWords(oidOrder, originalTextFile): 
+  import rominput
+  romObjects=rominput.read_file(originalTextFile)
+  ordered=orderRomObjectsByOid(romObjects, oidOrder)
+  for o in ordered: 
+    print "%4d %s" % (o.oid, o.text)
   
 if __name__ == '__main__':
   import csv
@@ -128,4 +138,9 @@ if __name__ == '__main__':
     rommat=[map(int, row) for row in reader]
     rels=objectRel(rommat)
     trav=objectRelTraverse(rels)
-    print ",".join(map(str, trav))
+    if len(sys.argv) == 2: 
+      printOids(trav)
+    elif len(sys.argv) == 3: 
+      printWords(trav, sys.argv[2])
+    else: 
+      print "invocation error"
