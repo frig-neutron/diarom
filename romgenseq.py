@@ -99,6 +99,21 @@ def objectRelTraverse(rels):
   for o in sorted(rels):
     traversal.extend(dfs(o))
   return traversal
+
+def orderRomObjectsByOid(romObjects,oidOrder):
+  """Put ROM objects into order specified by OID list.
+  
+  args: 
+    oids showing desired order of words
+    romobjects list, to perform lookups in
+
+  returns: 
+    words from romobjects list, in the order they appear in oidOrder
+  """
+  romoids=map(int, romObjects)
+  indexes=map(oidOrder.index, romoids)
+  ordered=map(romObjects.__getitem__, indexes)
+  return ordered
   
 if __name__ == '__main__':
   import csv
