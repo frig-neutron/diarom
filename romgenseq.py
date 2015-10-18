@@ -26,7 +26,7 @@ class ObjectRel(object):
     return len(self) > len(other)
 
 # throw exception if matrix not square
-def assertMatrixSqure(mat):
+def assertMatrixSquare(mat):
   expectedRowLen=len(mat)
   for row in mat:
     rowLen = len(row)
@@ -53,7 +53,7 @@ def objectRel(rommat):
 
   index of ObjectRel in return list == oid-1"""
 
-  assertMatrixSqure(rommat)
+  assertMatrixSquare(rommat)
   oid=0
   rels=[]
   for inRel in transposed(rommat):
