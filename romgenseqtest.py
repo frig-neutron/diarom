@@ -37,7 +37,7 @@ class RomGenSeqTest(unittest.TestCase):
       rel(2, [0]), 
       rel(3),
     ]
-    expectedOrder=[2,1,3,0]
+    expectedOrder=[[2],[1],[3],[0]]
     actualOrder=romgenseq.objectRelTraverse(rels)
     self.assertEqual(expectedOrder, actualOrder)
 
@@ -55,12 +55,13 @@ class RomGenSeqTest(unittest.TestCase):
       rel(13, [9,12])
     ]
 
-    expectedTrav=[4,5,6,7,10,11,12,13,9,8]
+    expectedTrav=[[4],[5],[6],[7],[10],[11],[12],[13],[9],[8]]
     actualTrav=romgenseq.objectRelTraverse(rels)
 
     self.assertEqual(expectedTrav, actualTrav)
 
   def test_traversal(self):
+    """1-3 and 5-9 form disconnected subgraphs"""
     rels=[
       rel(1, [3]),
       rel(2),
@@ -71,7 +72,7 @@ class RomGenSeqTest(unittest.TestCase):
       rel(8, [5,6,7]),
     ]
 
-    expectedTrav=[5,6,7,8,1,2,3]
+    expectedTrav=[[5],[6],[7],[8],[1],[2],[3]]
     actualTrav=romgenseq.objectRelTraverse(rels)
 
     self.assertEqual(expectedTrav, actualTrav)

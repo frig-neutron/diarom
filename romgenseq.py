@@ -74,7 +74,6 @@ def objectRelTraverse(rels):
   """Determine generic quesiton order for ROM diagram.
 
   args: 
-    oids to visit, in order of importance
     rels list, ordered by oid
     returns oids to question for object"""
 
@@ -92,7 +91,7 @@ def objectRelTraverse(rels):
       visited.add(obj)
       for r in sorted(map(lambda r: relsDict[r], obj.rel)):
         traversal.extend(dfs(r))
-      traversal.append(obj.oid)
+      traversal.append([obj.oid])
     return traversal
 
   traversal=[]
@@ -121,9 +120,10 @@ def printOids(oids):
 def printWords(oidOrder, originalTextFile): 
   import rominput
   romObjects=rominput.read_file(originalTextFile)
-  ordered=orderRomObjectsByOid(romObjects, oidOrder)
-  for o in ordered: 
-    print "%4d %s" % (o.oid, o.text)
+  for phraseOids in oidOrder: 
+    ordered=orderRomObjectsByOid(romObjects, phraseOids)
+    for o in ordered: 
+      print "%4d %s" % (o.oid, o.text)
   
 if __name__ == '__main__':
   import csv
