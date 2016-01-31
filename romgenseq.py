@@ -21,7 +21,7 @@ class ObjectRel(object):
     self.oid = oid
     self.rel = rel
   def __repr__(self): return ('oid:%d<-' % self.oid) + str(self.rel)
-  def __eq__(self, other): self.oid==other.oid and oid > 0
+  def __eq__(self, other): return self.oid==other.oid and self.oid > 0
   def __lt__(self, other): 
     return len(self) > len(other)
 

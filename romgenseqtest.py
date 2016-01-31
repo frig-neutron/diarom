@@ -6,6 +6,13 @@ def rel(oid, rel=[]): return romgenseq.ObjectRel(oid, rel)
 def oids(rels): return map(lambda r: r.oid, rels)
 
 class RomGenSeqTest(unittest.TestCase):
+
+  def test_ObjectRelEq(self):
+    r1=romgenseq.ObjectRel(1)
+    r2=romgenseq.ObjectRel(1)
+
+    self.assertEqual(r1, r2)
+
   def test_rommat2rels(self): 
     rommat=[
       [0, 2, 0],
