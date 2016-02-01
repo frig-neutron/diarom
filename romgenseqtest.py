@@ -60,6 +60,52 @@ class RomGenSeqTest(unittest.TestCase):
 
     self.assertEqual(expectedTrav, actualTrav)
 
+  def test_traversalShort(self):
+    rels=[
+      rel(5),
+      rel(6),
+      rel(7),
+      rel(8, [5,6,7]),
+    ]
+
+    expectedTrav=[
+        5,
+        6,
+        7,
+        8,
+        [5, 8], 
+        [6, 8], 
+        [7, 8]]
+    actualTrav=romgenseq.objectRelTraverse(rels)
+
+    self.assertEqual(expectedTrav, actualTrav)
+
+  def test_traversalLinear(self):
+    rels=[
+      rel(1, [] ), 
+      rel(2, [1]), 
+      rel(3, [2]), 
+      rel(4, [3])
+    ]
+
+    expectedTrav=[
+        [1],
+        [2],
+        [1, 2],
+        [3], 
+        [2, 3], 
+        [1, 2, 3], 
+        [4], 
+        [3, 4], 
+        [2, 3, 4], 
+        [1, 2, 3, 4]]
+
+    actualTrav=romgenseq.objectRelTraverse(rels)
+
+    print "TEST RESULTS"
+    for t in actualTrav: print t
+    self.assertEqual(expectedTrav, actualTrav)
+
   def test_traversal(self):
     """1-3 and 5-9 form disconnected subgraphs"""
     rels=[
