@@ -48,6 +48,15 @@ def nonZeroIndexes(numbers):
     i+=1
   return nonZeroIndexes
 
+
+def isPrefix(prefix, list):
+  """Return true if prefix is a sublist of list, starting at element 0"""
+  if len(list) < len(prefix): return False
+  for pair in zip(prefix, list):
+    if not pair[0] == pair[1]: 
+      return False
+  return True
+
 def objectRel(rommat):
   """Transform square ROM association matrix to list of ObjectRel.
 

@@ -167,5 +167,43 @@ class RomGenSeqTest(unittest.TestCase):
     self.assertEqual(expectedOrder, wordsInOrder)
 
 
+class ListPrefixTest(unittest.TestCase):
+
+  def test_isPrefix(self):
+    prefix=[1,2]
+    list=[1,2,3]
+
+    assert romgenseq.isPrefix(prefix, list)
+
+  def test_isEmptyPrefixOfEmptyList(self):
+    prefix=[]
+    list=[]
+
+    assert romgenseq.isPrefix(prefix, list)
+
+  def test_isEmptyPrefixOfNonEmptyList(self):
+    prefix=[]
+    list=[1]
+
+    assert romgenseq.isPrefix(prefix, list)
+
+  def test_notAPrefixIfLongerThanList(self):
+    prefix=[1]
+    list=[]
+
+    assert not romgenseq.isPrefix(prefix, list)
+
+  def test_notAPrefixIfFirstElementDiffers(self):
+    prefix=[2]
+    list=[3]
+
+    assert not romgenseq.isPrefix(prefix, list)
+
+  def test_notAPrefixIfSecondElementDiffers(self):
+    prefix=[2,1]
+    list=[2,3]
+
+    assert not romgenseq.isPrefix(prefix, list)
+
 if __name__ == '__main__':
   unittest.main()
