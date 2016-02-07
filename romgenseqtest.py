@@ -82,6 +82,32 @@ class RomGenSeqTest(unittest.TestCase):
 
   def test_traversalLinear(self):
     rels=[
+      rel(4, [3]),
+      rel(3, [2]), 
+      rel(2, [1]), 
+      rel(1, [] ) 
+    ]
+
+    expectedTrav=[
+        [1],
+        [2],
+        [1, 2],
+        [3], 
+        [2, 3], 
+        [1, 2, 3], 
+        [4], 
+        [3, 4], 
+        [2, 3, 4], 
+        [1, 2, 3, 4]]
+
+    actualTrav=romgenseq.objectRelTraverse(rels)
+
+    print "TEST RESULTS"
+    for t in actualTrav: print t
+    self.assertEqual(expectedTrav, actualTrav)
+
+  def test_traversalLinearReverse(self):
+    rels=[
       rel(1, [] ), 
       rel(2, [1]), 
       rel(3, [2]), 

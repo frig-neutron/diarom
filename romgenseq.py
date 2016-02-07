@@ -83,20 +83,69 @@ def objectRelTraverse(rels):
       lambda rel: (rel.oid, rel), 
       rels))
 
-  visited=set()
+  visited={}
   
+  class C:
+      def __init__(self): self.c = 0
+      def inc(self): self.c = self.c+1
+      def dec(self): self.c = self.c - 1
+      def val(self): return self.c
+      def p(self, msg): print (("  "*self.val())+str(msg))
+
+  log = C()
+
+
   def dfs(obj):
+    """Traverse object constraint subgraph and enumerate phrases.
+    
+      returns list of oid-phrases resulting from traversal, starting with the 
+      oid of the obj param, if not yet visited, and ending with the longest phrase 
+      in this subgraph.
+    """
+    log.inc()
+    log.p("DFS "+str(obj))
     traversal=[]
-    if obj not in visited:
-      visited.add(obj)
-      for r in sorted(map(lambda r: relsDict[r], obj.rel)):
-        traversal.extend(dfs(r))
+    if obj in visited:
+        traversal=visited[obj]
+    else:
+      constraints=map(lambda r: relsDict[r], obj.rel)
+      allExtendedPhrases=[]
+      for r in sorted(constraints):
+        phrases=dfs(r)
+        traversal.extend(phrases) # carry forward
+
+        def isDirectConstraint(ph): 
+            isConstraint = ph[-1] in obj.rel
+            log.p('does '+str(ph)+' constrain '+str(obj)+'? '+str(isConstraint))
+            return isConstraint
+
+        extendedPhrases=[ ph + [obj.oid] for ph in phrases if isDirectConstraint(ph) ]
+        allExtendedPhrases.append(extendedPhrases)
+
       traversal.append([obj.oid])
+      for phrase in allExtendedPhrases: traversal.extend(phrase)
+      visited[obj] = traversal
+
+    log.p("result="+str(traversal))
+    log.dec()
     return traversal
 
-  traversal=[]
+  paths=[]
+  print str(sorted(rels))
   for o in sorted(rels):
-    traversal.extend(dfs(o))
+    print
+    print "TOP LEVEL: "+str(o)
+    if o not in visited:
+        t=dfs(o)
+        paths.append(t)
+
+  traversal=[]
+  print "PATHS"
+  for path in paths: 
+    print str(path)
+    traversal.extend(path)
+  print 
+  print "R"+str(traversal)
   return traversal
 
 def orderRomObjectsByOid(romObjects,oidOrder):
