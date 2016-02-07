@@ -57,6 +57,22 @@ def isPrefix(prefix, list):
       return False
   return True
 
+def isNonIdentityPrefix(prefix, list): 
+  return isPrefix(prefix, list) and not prefix is list
+
+def isPrefixOfSomeList(prefixCandidate, lists): 
+  extensions = filter(
+    lambda l: isNonIdentityPrefix(prefixCandidate, l), 
+    lists)
+  return len(extensions) > 0
+
+def uniquePrefixes(listOfLists):
+  """Retain lists that are not prefixes of other lists.
+  
+  Return list of lists which are not prefixes of each other.
+  """
+  return [ l for l in listOfLists if not isPrefixOfSomeList(l, listOfLists) ]
+
 def objectRel(rommat):
   """Transform square ROM association matrix to list of ObjectRel.
 

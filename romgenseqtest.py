@@ -205,5 +205,39 @@ class ListPrefixTest(unittest.TestCase):
 
     assert not romgenseq.isPrefix(prefix, list)
 
+  def test_nonIdentityPrefixSkipsIdentity(self):
+    l = [1,2]
+    
+    assert not romgenseq.isNonIdentityPrefix(l,l)
+
+  def test_notAPrefixOfSomeList(self):
+    l = [1]
+    lists=[l, [3,4]]
+
+    assert not romgenseq.isPrefixOfSomeList(l, lists)
+
+  def test_uniquePrefix(self):
+    lists=[
+      [1,2,3], 
+      [1,2,3,4], 
+      [1]]
+
+    uniq=romgenseq.uniquePrefixes(lists)
+    expected=[[1,2,3,4]]
+
+    self.assertEqual(uniq, expected)
+
+  def test_notAPrefix(self):
+    lists=[
+      [1,2,3], 
+      [1,2,3,4], 
+      [7]]
+
+    uniq=romgenseq.uniquePrefixes(lists)
+    expected=[[1,2,3,4],[7]]
+
+    self.assertEqual(uniq, expected)
+
+
 if __name__ == '__main__':
   unittest.main()
