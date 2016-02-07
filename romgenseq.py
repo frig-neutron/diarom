@@ -9,8 +9,7 @@
 # 2 - verb-object relation
 # 3 - particularizing/constraint relation
 # 4 - sequencing relation
-#
-
+# 
 import functools;
 
 @functools.total_ordering
@@ -81,6 +80,8 @@ def objectRel(rommat):
   assertMatrixSquare(rommat)
   oid=0
   rels=[]
+  # Transposing because orig matrix stores link types 
+  # from colIdx to rowIdx
   for inRel in transposed(rommat):
       oid+=1
       relOids = map(
@@ -90,10 +91,6 @@ def objectRel(rommat):
   return rels;
 
 def oidList(rels): return map(lambda r: r.oid, rels)
-
-def d(o, msg=""):
-  print(msg+" "+str(o))
-  return o
 
 def objectRelTraverse(rels):
   """Determine generic quesiton order for ROM diagram.
@@ -156,21 +153,18 @@ def objectRelTraverse(rels):
     return traversal
 
   paths=[]
-  print str(sorted(rels))
+  log.p(sorted(rels))
   for o in sorted(rels):
-    print
-    print "TOP LEVEL: "+str(o)
-    if o not in visited:
-        t=dfs(o)
-        paths.append(t)
+    log.p( "\nTOP LEVEL: "+str(o))
+    t=dfs(o)
+    paths.append(t)
 
   traversal=[]
-  print "PATHS"
+  log.p( "PATHS")
   for path in paths: 
-    print str(path)
+    log.p(path)
     traversal.extend(path)
-  print 
-  print "R"+str(traversal)
+  log.p("\nR"+str(traversal))
   return traversal
 
 def orderRomObjectsByOid(romObjects,oidOrder):
