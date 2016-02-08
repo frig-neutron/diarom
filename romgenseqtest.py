@@ -44,7 +44,16 @@ class RomGenSeqTest(unittest.TestCase):
       rel(2, [0]), 
       rel(3),
     ]
-    expectedOrder=[[2],[1],[3],[0]]
+
+    expectedOrder=[
+      [2],
+      [1],
+      [3],
+      [0], 
+      [2, 0], 
+      [1, 0], 
+      [3, 0]]
+    
     actualOrder=romgenseq.objectRelTraverse(rels)
     self.assertEqual(expectedOrder, actualOrder)
 
@@ -62,7 +71,41 @@ class RomGenSeqTest(unittest.TestCase):
       rel(13, [9,12])
     ]
 
-    expectedTrav=[[4],[5],[6],[7],[10],[11],[12],[13],[9],[8]]
+    expectedTrav=[
+      [4],
+      [5],
+      [4,5],
+      [6],
+      [7],
+      [6,7],
+      [10],
+      [11],
+      [12],
+      [10,12], 
+      [11,12],
+      [13],
+      [12,13],
+      [10,12,13],
+      [11,12,13],
+      [9],
+      [13, 9],
+      [12, 13, 9],
+      [10, 12, 13, 9], 
+      [11, 12, 13, 9],
+      [6],
+      [8], 
+      [5,8], 
+      [4,5,8],
+      [6,8], 
+      [7,8], 
+      [6,7,8], 
+      [9,8], 
+      [13, 9, 8], 
+      [12, 13, 9, 8], 
+      [10, 12, 13, 9, 8], 
+      [11, 12, 13, 9, 8],
+      [6, 8]
+    ]
     actualTrav=romgenseq.objectRelTraverse(rels)
 
     self.assertEqual(expectedTrav, actualTrav)
