@@ -136,7 +136,8 @@ def objectRelTraverse(rels):
     traversal=[]
     if obj in visited:
         traversal=visited[obj]
-    else:
+    else:   
+      visited[obj] = [] # combat recusive loop
       constraints=map(lambda r: relsDict[r], obj.rel)
       allExtendedPhrases=[]
       for r in sorted(constraints):
