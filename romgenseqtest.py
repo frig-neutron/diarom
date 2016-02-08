@@ -69,10 +69,10 @@ class RomGenSeqTest(unittest.TestCase):
     ]
 
     expectedTrav=[
-        5,
-        6,
-        7,
-        8,
+        [5],
+        [6],
+        [7],
+        [8],
         [5, 8], 
         [6, 8], 
         [7, 8]]
