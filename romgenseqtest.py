@@ -167,6 +167,77 @@ class RomGenSeqTest(unittest.TestCase):
     self.assertEqual(expectedOrder, wordsInOrder)
 
 
+class SubListTest(unittest.TestCase):
+  def test_emptySubInEmptyList(self):
+    sub=[]
+    list=[]
+
+    assert romgenseq.isSublist(sub, list)
+
+  def test_emptySubInNonEmptyList(self):
+    sub=[]
+    list=[1]
+
+    assert romgenseq.isSublist(sub, list)
+
+  def test_singleElementSubInEmptyList(self):
+    sub=[1]
+    list=[]
+
+    assert not romgenseq.isSublist(sub, list)
+
+  def test_singleElementSubInNonEmptyList(self):
+    sub=[1]
+    list=[1]
+
+    assert romgenseq.isSublist(sub, list)
+
+  def test_singleElementSubInTwoElementList(self):
+    sub=[1]
+    list=[2,1]
+
+    assert not romgenseq.isSublist(sub, list)
+
+  def test_singleElementSubInTwoElementList(self):
+    sub=[3]
+    list=[2,1]
+
+    assert not romgenseq.isSublist(sub, list)
+
+  def test_notASubOfSomeList(self):
+    l = [1]
+    lists=[l, [3,4]]
+
+    assert not romgenseq.isSublistOfSomeList(l, lists)
+
+  def test_uniqueSublist(self):
+    lists=[
+      [1,2,3], 
+      [1,2,3,4], 
+      [1]]
+
+    uniq=romgenseq.uniqueSublists(lists)
+    expected=[[1,2,3,4]]
+
+    self.assertEqual(uniq, expected)
+
+  def test_notASublist(self):
+    lists=[
+      [1,2,3], 
+      [1,2,3,4], 
+      [7]]
+
+    uniq=romgenseq.uniqueSublists(lists)
+    expected=[[1,2,3,4],[7]]
+
+    self.assertEqual(uniq, expected)
+
+  def test_nonIdentitySubSkipsIdentity(self):
+    l = [1,2]
+    
+    assert not romgenseq.isNonIdentitySublist(l,l)
+
+
 class ListPrefixTest(unittest.TestCase):
 
   def test_isPrefix(self):
@@ -205,38 +276,6 @@ class ListPrefixTest(unittest.TestCase):
 
     assert not romgenseq.isPrefix(prefix, list)
 
-  def test_nonIdentityPrefixSkipsIdentity(self):
-    l = [1,2]
-    
-    assert not romgenseq.isNonIdentityPrefix(l,l)
-
-  def test_notAPrefixOfSomeList(self):
-    l = [1]
-    lists=[l, [3,4]]
-
-    assert not romgenseq.isPrefixOfSomeList(l, lists)
-
-  def test_uniquePrefix(self):
-    lists=[
-      [1,2,3], 
-      [1,2,3,4], 
-      [1]]
-
-    uniq=romgenseq.uniquePrefixes(lists)
-    expected=[[1,2,3,4]]
-
-    self.assertEqual(uniq, expected)
-
-  def test_notAPrefix(self):
-    lists=[
-      [1,2,3], 
-      [1,2,3,4], 
-      [7]]
-
-    uniq=romgenseq.uniquePrefixes(lists)
-    expected=[[1,2,3,4],[7]]
-
-    self.assertEqual(uniq, expected)
 
 
 if __name__ == '__main__':

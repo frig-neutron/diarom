@@ -56,21 +56,28 @@ def isPrefix(prefix, list):
       return False
   return True
 
-def isNonIdentityPrefix(prefix, list): 
-  return isPrefix(prefix, list) and not prefix is list
+def isSublist(sub, list): 
+  "Return true if list contains sub as sublist"
+  if [] == sub == list: return True
+  for i in range(0,len(list)):
+    if isPrefix(sub, list[i:]): return True
+  return False
 
-def isPrefixOfSomeList(prefixCandidate, lists): 
+def isNonIdentitySublist(sub, list): 
+  return isSublist(sub, list) and not sub is list
+
+def isSublistOfSomeList(subCandidate, lists): 
   extensions = filter(
-    lambda l: isNonIdentityPrefix(prefixCandidate, l), 
+    lambda l: isNonIdentitySublist(subCandidate, l), 
     lists)
   return len(extensions) > 0
 
-def uniquePrefixes(listOfLists):
-  """Retain lists that are not prefixes of other lists.
+def uniqueSublists(listOfLists):
+  """Retain lists that are not subes of other lists.
   
-  Return list of lists which are not prefixes of each other.
+  Return list of lists which are not subes of each other.
   """
-  return [ l for l in listOfLists if not isPrefixOfSomeList(l, listOfLists) ]
+  return [ l for l in listOfLists if not isSublistOfSomeList(l, listOfLists) ]
 
 def objectRel(rommat):
   """Transform square ROM association matrix to list of ObjectRel.
@@ -159,6 +166,7 @@ def objectRelTraverse(rels):
     t=dfs(o)
     paths.append(t)
 
+  paths=uniqueSublists(paths)
   traversal=[]
   log.p( "PATHS")
   for path in paths: 
