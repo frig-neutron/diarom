@@ -119,7 +119,7 @@ def objectRelTraverse(rels):
       def inc(self): self.c = self.c+1
       def dec(self): self.c = self.c - 1
       def val(self): return self.c
-      def p(self, msg): print (("  "*self.val())+str(msg))
+      def p(self, msg): pass # print (("  "*self.val())+str(msg))
 
   log = C()
 
@@ -146,7 +146,6 @@ def objectRelTraverse(rels):
 
         def isDirectConstraint(ph): 
             isConstraint = ph[-1] in obj.rel
-            log.p('does '+str(ph)+' constrain '+str(obj)+'? '+str(isConstraint))
             return isConstraint
 
         extendedPhrases=[ ph + [obj.oid] for ph in phrases if isDirectConstraint(ph) ]
