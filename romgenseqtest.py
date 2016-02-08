@@ -30,6 +30,13 @@ class RomGenSeqTest(unittest.TestCase):
     self.assertEqual(rels[2].oid, 3)
     self.assertEqual(rels[2].rel, [2,3])
 
+  def test_selfConstraint(self):
+    rels=[ rel(0, [0]) ]
+
+    expectedOrder=[[0]]
+    actualOrder=romgenseq.objectRelTraverse(rels)
+    self.assertEqual(expectedOrder, actualOrder)
+
   def test_traverseRelOrder(self):
     rels=[
       rel(0,[1,2,3]),
